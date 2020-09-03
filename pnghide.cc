@@ -19,7 +19,7 @@ auto get_version() {
 auto get_usage() {
 	return get_version() + std::string(R"(
 Usage:
-    pnghide hide [--input=FILE] [--output=FILE] <image>
+    pnghide hide [--input=FILE] [--output=FILE] [--not-fill-null] <image>
     pnghide unhide [--output=FILE] [--limit=LIMIT] <image>
 
 Options:
@@ -28,12 +28,14 @@ Options:
     -i, --input=FILE      set input file [default: /dev/stdin]
     -o, --output=FILE     set output file [default: /dev/stdout]
     -l, --limit=LIMIT     set limit reading bytes [default: -1]
+    -n, --not-fill-null   do not write zeroes after input
 )");
 }
 template <typename TPixel>
 void proccess_hide(png::image<TPixel>& image,
 				   std::istream& input,
-				   std::ostream& output) {
+				   std::ostream& output,
+				   bool not_fill_null) {
 	auto width = image.get_width();
 	auto height = image.get_height();
 
@@ -104,13 +106,15 @@ void proccess_hide(png::image<TPixel>& image,
 		std::cerr << "Error: size of input is very large\n";
 	}
 
-	try {
-		for (;;) {
-			tmp = 0;
-			tmp_size = 8;
-			proccess_tmp();
+	if (not_fill_null == false) {
+		try {
+			for (;;) {
+				tmp = 0;
+				tmp_size = 8;
+				proccess_tmp();
+			}
+		} catch (const std::runtime_error&) {
 		}
-	} catch (const std::runtime_error&) {
 	}
 
 	std::cerr << "Writed " << writed << " bytes\n";
@@ -160,6 +164,7 @@ int main(int argc, const char** argv) {
 	auto input = args.at("--input").asString();
 	auto output = args.at("--output").asString();
 	auto limit = args.at("--limit").asLong();
+	auto not_fill_null = args.at("--not-fill-null").asBool();
 
 	std::ifstream fin;
 	std::ofstream fout;
@@ -176,7 +181,7 @@ int main(int argc, const char** argv) {
 			fin.open(input);
 			std::cin.rdbuf(fin.rdbuf());
 		}
-		proccess_hide(image, std::cin, std::cout);
+		proccess_hide(image, std::cin, std::cout, not_fill_null);
 		image.write_stream(std::cout);
 	} else if (unhide) {
 		proccess_unhide(image, std::cout, limit);

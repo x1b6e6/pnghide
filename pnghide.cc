@@ -1,11 +1,10 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
-#include <png++/image.hpp>
 #include <stdexcept>
 
 #include <docopt/docopt.h>
-#include <png++/png.hpp>
+#include <png++/image.hpp>
 #include <png++/rgb_pixel.hpp>
 
 #ifndef PROJECT_VERSION

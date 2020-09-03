@@ -8,8 +8,8 @@
 #include <png++/rgb_pixel.hpp>
 
 #ifndef PROJECT_VERSION
-#warning Using hardcoded version
-#define PROJECT_VERSION "0.1.0"
+#warning PROJECT_VERSION not found
+#define PROJECT_VERSION "(unknown)"
 #endif
 
 auto get_version() {

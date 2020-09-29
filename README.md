@@ -26,7 +26,10 @@ pnghide unhide result.png
 ```
 
 ## How to build and install
-PKGBUILD:
+CMake:
 ```bash
-makepkg -si
+cmake -Bbuild
+cmake --build build
+./build/pnghide # is result file
 ```
+
